@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 The LibVMI Library is an introspection library that simplifies access to
 memory in a target virtual machine or in a file containing a dump of
@@ -42,12 +42,12 @@ along with LibVMI.  If not, see <http://www.gnu.org/licenses/>.
 import os
 import os.path
 import sys
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 import pdbparse
 from pefile import PE
 from shutil import copyfileobj
-from urllib import FancyURLopener
+from urllib.request import FancyURLopener
 from pdbparse.dbgold import CV_RSDS_HEADER, CV_NB10_HEADER, DebugDirectoryType
 
 #download_file function
@@ -62,21 +62,19 @@ def download_file(guid,fname,verbose,path=""):
 
     url = "http://msdl.microsoft.com/download/symbols/%s/%s/" % (fname,guid.upper())
 
-    types = [fname[:-1] + '_', fname]
+    if verbose:
+        print(("Trying " + url + fname))
 
-    for saved_file in types:
-      if verbose:
-        print "Trying %s" % (url + saved_file)
+    curl_command = 'curl -L %s --user-agent "Microsoft-Symbol-Server" %s --output %s' % ("" if verbose else "-s", url + fname, fname)
+    print("Curl command: " + curl_command)
+    retval = os.system(curl_command)
 
-      retval = os.system('curl %s --user-agent "Microsoft-Symbol-Server" %s --output %s' % ("" if verbose else "-s", url + saved_file, saved_file))
-
-      if retval == 0:
-        return saved_file
-
+    if retval == 0:
+        return fname
     return None
 
 def error():
-	print "Must pipe the output of getGUID into this program"
+	print("Must pipe the output of getGUID into this program")
 	sys.exit(0)
 
 
@@ -102,11 +100,10 @@ def main():
         inName=inName.strip('\r\n')
         if inName == '':
             error()
-        #print "OSversion: %s" % OSversion
-        #print "Guid: %s" % inGuid
-        #print "Name: %s" % inName
-        #sys.exit(0)
-        saved_file = download_file(inGuid,inName,opts.verb)
+        print("Os version: " + OSversion)
+        print("GUID: " + inGuid)
+        print("Name: " + inName)
+        saved_file = download_file(inGuid,inName,True)
     else:
         error()
     if saved_file is not None:
@@ -123,8 +120,6 @@ def main():
                 os.system("rm %s" % saved_file)
                 savefile = saved_file[:-1] + 'b'
                 os.system("mv %s %s" % (savefile, OSversion))
-    print "%s" % OSversion
-
 
 if __name__ == "__main__":
 	main()
