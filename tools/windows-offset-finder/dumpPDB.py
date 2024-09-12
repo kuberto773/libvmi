@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """
 The LibVMI Library is an introspection library that simplifies access to 
 memory in a target virtual machine or in a file containing a dump of 
@@ -36,7 +36,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with LibVMI.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import sys,os
 import pdbparse
 import os.path
@@ -157,7 +157,7 @@ def mod_str(mod):
 #Outputs: Results in the creation of a .txt file containing the types in the PDB file.
 def dump_types(pdbFile, filename):
 	pdb = pdbparse.parse(pdbFile) #call the parse function in __init__ of the pdbparse library
-	structs = [ s for s in pdb.streams[2].types.values() if (s.leaf_type == "LF_STRUCTURE" or s.leaf_type == "LF_UNION") and not s.prop.fwdref ]
+	structs = [ s for s in list(pdb.streams[2].types.values()) if (s.leaf_type == "LF_STRUCTURE" or s.leaf_type == "LF_UNION") and not s.prop.fwdref ]
 
 
 	FILE=open(filename, "w"); #open filename in write mode
@@ -185,7 +185,7 @@ def main():
 			infile = sys.stdin.read().rstrip().split("\n")[-1].strip() #read stdin, strip out newline
 			dump_types(infile, opts.outfile)
 	else:
-		print "Must supply an output filename.  Use -h for help"
+		print("Must supply an output filename.  Use -h for help")
 		sys.exit(0)
 
 
