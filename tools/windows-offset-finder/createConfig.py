@@ -26,7 +26,7 @@ You should have received a copy of the GNU Lesser General Public License
 along with LibVMI.  If not, see <http://www.gnu.org/licenses/>.
 """
 
-import os.path, sys, os, urllib2
+import os.path, sys, os, urllib.request, urllib.error, urllib.parse
 
 def configfromdump(filename):
     config = "<vm name> {\n"
@@ -46,7 +46,7 @@ def configfromdump(filename):
                     pname = "    win_pname   = "+ lineSplit[2]+';\n'
     config += tasks + base + pid + pname
     config += "}"
-    print config
+    print(config)
 
 def main():
     from optparse import OptionParser
@@ -57,7 +57,7 @@ def main():
     if opts.infile:
         configfromdump(opts.infile)
     else:
-        print "Must supply an input filename.  Use -h for help"
+        print("Must supply an input filename.  Use -h for help")
         sys.exit(0)
 
 if __name__ == "__main__":
