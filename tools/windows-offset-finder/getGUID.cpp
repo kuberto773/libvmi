@@ -175,6 +175,10 @@ int check_OS(int majVer,int minVer)
             if (minVer == 2)
                 printf("OS version: Windows_8?\n");
             break;
+        case 10:
+            if (minVer == 0)
+                printf("OS version: Windows_10\n");
+            break;
         default:
             printf("OS version unknown or not Windows\n");
 
